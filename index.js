@@ -21,11 +21,11 @@ function playTick() {
 
 // Export updateBeat to WebAssembly
 function updateBeat(beat) {
-    const beatElement = document.getElementById("beat");
-    if (beatElement) {
-      beatElement.textContent = beat.toString(); // Update the displayed beat
-    }
+  const beatElement = document.getElementById("beat");
+  if (beatElement) {
+    beatElement.textContent = beat.toString(); // Update the displayed beat
   }
+}
 
 // Load the tick sound
 fetch('./tick.wav')
@@ -53,30 +53,38 @@ fetch('./build/release.wasm')
       abort: () => console.error("Wasm aborted")
     }
   }))
-.then(instance => {
-  // Get the exports (might be directly the instance or in instance.exports)
-  const exports = instance.exports || instance.instance.exports;
-  
-  const { start, stop, update } = exports;
-  
-  // Button event listeners
-  let animationFrame;
-  document.getElementById('start').addEventListener('click', () => {
-    audioContext.resume().then(() => {
-      start(120); // Start at 120 BPM
-      function loop() {
-        update();
-        animationFrame = requestAnimationFrame(loop);
-      }
-      loop();
-    });
-  });
+  .then(instance => {
+    // Get the exports (might be directly the instance or in instance.exports)
+    const exports = instance.exports || instance.instance.exports;
 
-  document.getElementById('stop').addEventListener('click', () => {
-    stop();
-    cancelAnimationFrame(animationFrame);
+    const { start, stop, update } = exports;
+
+    // Replace the button event listeners with this
+    const toggleButton = document.getElementById('toggle');
+    let isRunning = false;
+    let animationFrame;
+
+    toggleButton.addEventListener('click', () => {
+      if (!isRunning) {
+        audioContext.resume().then(() => {
+          start(120);
+          isRunning = true;
+          toggleButton.textContent = '⏹ Stop';
+
+          function loop() {
+            update();
+            animationFrame = requestAnimationFrame(loop);
+          }
+          loop();
+        });
+      } else {
+        stop();
+        isRunning = false;
+        toggleButton.textContent = '▶ Start';
+        cancelAnimationFrame(animationFrame);
+      }
+    });
+  })
+  .catch(err => {
+    console.error("Failed to instantiate WebAssembly module:", err);
   });
-})
-.catch(err => {
-  console.error("Failed to instantiate WebAssembly module:", err);
-});

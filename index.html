@@ -1,20 +1,33 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Wasm Metronome</title>
+    <title>on.time</title>
     <style>
         #beat {
-            font-size: 10rem;
+            font-size: 20rem;
             text-align: center;
             margin-top: 20vh;
         }
+
+        #toggle {
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #toggle:hover {
+            background-color: #ddd;
+        }
     </style>
 </head>
+
 <body>
-    <h1>WebAssembly Metronome</h1>
-    <button id="start">Start (120 BPM)</button>
-    <button id="stop">Stop</button>
+    <h1>WebAssembly Metronome - 120 bpm</h1>
+    <button id="toggle">▶ Start</button>
     <div id="beat">-</div> <!-- Display the current beat here -->
     <script type="module" src="./index.js"></script>
 </body>
+
 </html>
