@@ -5,9 +5,48 @@
     <title>on.time</title>
     <style>
         #beat {
-            font-size: 20rem;
+            font-size: 30vh;
             text-align: center;
-            margin-top: 20vh;
+            align-items: center;
+        }
+
+        #toggle {
+            font-size: 2rem;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: block;
+            margin: 20px auto;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            line-height: 100px;
+        }
+
+        #toggle:hover {
+            background-color: #ddd;
+        }
+
+        #bpmInput {
+            font-size: 7vh; /* Half the size of the beat counter */
+            text-align: center;
+            display: block;
+            margin: 0 auto 20px auto; /* Center it and add some margin below */
+            font-family: 'Times New Roman', Times, serif; /* Set font to Times New Roman */
+        }
+
+        #timeSignature {
+            font-size: 5vh;
+            text-align: center;
+            display: block;
+            margin: 0 auto 20px auto; /* Center it and add some margin below */
+        }
+
+        #timeDivision {
+            font-size: 5vh;
+            text-align: center;
+            display: block;
+            margin: 0 auto 20px auto; /* Center it and add some margin below */
         }
 
         #toggle {
@@ -24,8 +63,21 @@
 </head>
 
 <body>
-    <h1>WebAssembly Metronome - 120 bpm</h1>
-    <button id="toggle">▶ Start</button>
+    <input type="number" id="bpmInput" placeholder="Enter BPM" value="120" />
+    <select id="timeSignature">
+        <option value="4/4">4/4</option>
+        <option value="3/4">3/4</option>
+        <option value="6/8">6/8</option>
+        <option value="7/8">7/8</option>
+    </select>
+    <select id="timeDivision">
+        <option value="0.25">♩ (Quarter Note)</option>
+        <option value="0.125">♪ (Eighth Note)</option>
+        <option value="0.0833">♪. (Eighth Triplet Note)</option>
+        <option value="0.0625">𝅘𝅥𝅯 (16th Note)</option>
+    
+    </select>
+    <button id="toggle">▶</button>
     <div id="beat">-</div> <!-- Display the current beat here -->
     <script type="module" src="./index.js"></script>
 </body>

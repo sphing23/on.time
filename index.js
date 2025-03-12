@@ -16,7 +16,7 @@ function playTick() {
   source.buffer = tickBuffer;
   source.connect(audioContext.destination);
   source.start(0);
-  console.log("Tick played!");
+  // console.log("Tick played!" + Date.now());
 }
 
 // Export updateBeat to WebAssembly
@@ -28,7 +28,7 @@ function updateBeat(beat) {
 }
 
 // Load the tick sound
-fetch('./tick.wav')
+fetch('./tick-short.mp3')
   .then(res => res.arrayBuffer())
   .then(buffer => audioContext.decodeAudioData(buffer))
   .then(decoded => {
@@ -48,7 +48,6 @@ fetch('./build/release.wasm')
 
       // Provide Date.now function
       "Date.now": () => Date.now(),
-      "console.log": () => console.log(),
       // Add any other required imports
       abort: () => console.error("Wasm aborted")
     }
@@ -61,27 +60,41 @@ fetch('./build/release.wasm')
 
     // Replace the button event listeners with this
     const toggleButton = document.getElementById('toggle');
+    const bpmInput = document.getElementById('bpmInput');
+    const timeSignature = document.getElementById('timeSignature');
+    const timeDivision = document.getElementById('timeDivision');
     let isRunning = false;
-    let animationFrame;
+    let tempoTimer;
 
     toggleButton.addEventListener('click', () => {
       if (!isRunning) {
+        const bpm = parseInt(bpmInput.value) || 120; // Default to 120 BPM if input is invalid
+        const timeSig = parseInt(timeSignature.value.split('/')[0]); // Get the numerator of the time signature
+        const timeSigBtmNo = parseInt(timeSignature.value.split('/')[1]); // Get the denominator of the time division
+        const division = parseFloat(timeDivision.value); // get time division float
         audioContext.resume().then(() => {
-          start(120);
+          start(bpm, timeSig, timeSigBtmNo, division);
           isRunning = true;
-          toggleButton.textContent = '⏹ Stop';
+          toggleButton.textContent = '⏹';
+          bpmInput.disabled = true;
+          timeSignature.disabled = true;
+          timeDivision.disabled = true;
 
           function loop() {
             update();
-            animationFrame = requestAnimationFrame(loop);
+            console.log("Looping" + Date.now());
+            tempoTimer = setTimeout(loop, 0);
           }
           loop();
         });
       } else {
         stop();
         isRunning = false;
-        toggleButton.textContent = '▶ Start';
-        cancelAnimationFrame(animationFrame);
+        toggleButton.textContent = '▶';
+        bpmInput.disabled = false;
+        timeSignature.disabled = false;
+        timeDivision.disabled = false;
+        clearTimeout(tempoTimer);
       }
     });
   })
